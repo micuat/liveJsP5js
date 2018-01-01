@@ -61,11 +61,6 @@ void initNashorn() {
     // which will "bind" properties of the PApplet object
     ((Invocable)nashorn).invokeMethod(jsObject, "bindProperties", global, (PApplet)this);
 
-    // define "define"
-    nashorn.eval("function define(varname, val){if(typeof this[varname] == 'undefined')this[varname] = val;}");
-
-    //nashorn.eval("load(dataPath('jvm-npm.js'))");
-
     // console.log is print
     nashorn.eval("var console = {}; console.log = print;");
 
