@@ -102,7 +102,7 @@ void initNashorn() {
     // utility
     nashorn.eval("this.isReservedFunction = function (str) {" +
       "  var isArgument_ = function (element) { return str === element; };" +
-      "  return ['setup', 'draw', 'keyPressed', 'keyReleased', 'keyTyped', 'mouseClicked', 'mouseDragged', 'mouseMoved', 'mousePressed', 'mouseReleased', 'mouseWheel'].some(isArgument_);" +
+      "  return ['setup', 'draw', 'keyPressed', 'keyReleased', 'keyTyped', 'mouseClicked', 'mouseDragged', 'mouseMoved', 'mousePressed', 'mouseReleased', 'mouseWheel', 'oscEvent'].some(isArgument_);" +
       "}");
 
     // p5js entry point

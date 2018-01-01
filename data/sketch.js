@@ -33,6 +33,10 @@ var s = function( sketch ) {
   sketch.mousePressed = function(event) {
     console.log(event);
   };
+
+  sketch.oscEvent = function (theOscMessage) {
+    console.log(theOscMessage);
+  };
 };
 
 var myp5 = new p5(s);

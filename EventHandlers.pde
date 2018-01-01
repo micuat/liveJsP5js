@@ -144,6 +144,8 @@ void mousePressed(MouseEvent event) {
 
 void oscEvent(OscMessage theOscMessage) {
   try {
+    nashorn.eval("for(var prop in pApplet) {if(!this.isReservedFunction(prop)) {globalSketch[prop] = pApplet[prop]}}");
+
     nashorn.eval("var theOscMessage = {}");
     Object theOscMessageObject = nashorn.eval("this.theOscMessage");
     Object jsObject = nashorn.eval("Object");
