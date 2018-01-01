@@ -40,8 +40,7 @@ void setup() {
   size(800, 800, P3D);
   frameRate(60);
 
-  String path = dataPath("");
-  scriptPath = dataPath("script.js");
+  scriptPath = dataPath("sketch.js");
 
   initNashorn();
 
