@@ -1,6 +1,5 @@
 var s = function( sketch ) {
 
-  var x = 100; 
   var y = 100;
 
   sketch.setup = function() {
@@ -17,7 +16,9 @@ var s = function( sketch ) {
     var w = sketch.map(Math.sin(sketch.millis() * 0.001), -1, 1, 0, 200);
     sketch.rect(sketch.mouseX, sketch.mouseY, w, 100);
     sketch.rectMode(sketch.CORNER);
-    var h = sketch.map(x++ % 100, 0, 100, -sketch.height/2, 0);
+    var h = y++ % 100;
+    if(h < 50) h = sketch.map(h, 0, 50, -sketch.height/2, 0);
+    else h = sketch.map(h, 100, 50, -sketch.height/2, 0);
     sketch.rect(sketch.width/2 - 50, sketch.height, 100, h);
   };
 
