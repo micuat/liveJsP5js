@@ -29,65 +29,19 @@ private static ScriptEngine nashorn;
 
 public static String VERSION = "0.1";
 
-private static ArrayList<String> scriptPaths = new ArrayList<String>();
-private static ArrayList<Long> prevModified = new ArrayList<Long>();
-
-private static boolean first = true;
-
-PSurfaceAWT.SmoothCanvas smoothCanvas;
+private static String scriptPath;
+private static long prevModified;
 
 float frameRate() {
   return frameRate;
 }
 
 void setup() {
-  boolean projector = false;
-  //size(1920, 1080, P3D);
-  //size(2736, 1824, P3D);
   size(800, 800, P3D);
-  if (!projector) {
-  } else {
-    PSurfaceAWT awtSurface = (PSurfaceAWT)surface;
-    smoothCanvas = (PSurfaceAWT.SmoothCanvas)awtSurface.getNative();
-    smoothCanvas.getFrame().setSize((int)(1280*1.75), (int)(1024*1.75));
-    awtSurface.setSize((int)(1280*1.75), (int)(1024*1.75));
-    smoothCanvas.getFrame().setAlwaysOnTop(true);
-    smoothCanvas.getFrame().removeNotify();
-    smoothCanvas.getFrame().setUndecorated(true);
-    smoothCanvas.getFrame().setLocation(+(int)(2736*1.75), 0);
-    smoothCanvas.getFrame().addNotify();
-  }
   frameRate(60);
-  smooth();
-  noStroke();
 
   String path = dataPath("");
-
-  println("Listing all filenames in a directory: ");
-  String[] filenames = listFileNames(path);
-  printArray(filenames);
-
-  println("\nListing info about all files in a directory: ");
-  File[] files = listFiles(path);
-  for (File f : files) {
-    String extension = "";
-
-    int i = f.getName().lastIndexOf('.');
-    if (i > 0) {
-      extension = f.getName().substring(i+1);
-
-      if (extension.equals("js")) {
-        scriptPaths.add(dataPath(f.getName()));
-      }
-    }
-  }
-
-  scriptPaths.clear();
-  scriptPaths.add(dataPath("script.js"));
-  for (int i = 0; i < scriptPaths.size(); i++) {
-    prevModified.add(0l);
-    encoded.add(null);
-  }
+  scriptPath = dataPath("script.js");
 
   initNashorn();
 
@@ -166,11 +120,8 @@ void initNashorn() {
 }
 
 void draw() {
-  ArrayList<String> jsCodes = new ArrayList<String>();
   try {
-    for (int i = 0; i < scriptPaths.size(); i++) {
-      jsCodes.add(readFile(scriptPaths.get(i), i));
-    }
+    String jsCode = readFile(scriptPath);
   }
   catch (IOException e) {
     e.printStackTrace();
@@ -187,18 +138,17 @@ void draw() {
   }
 }
 
-private static ArrayList<byte[]> encoded = new ArrayList<byte[]>();
-public static String readFile(String path, int count) throws IOException {
+private static byte[] encoded;
+public static String readFile(String path) throws IOException {
   long lastModified = Files.getLastModifiedTime(Paths.get(path)).toMillis();
-  if (prevModified.get(count) < lastModified || encoded.get(count) == null) {
-    encoded.set(count, Files.readAllBytes(Paths.get(path)));
+  if (prevModified < lastModified || encoded == null) {
+    encoded = Files.readAllBytes(Paths.get(path));
     println("updated at " + lastModified);
-    prevModified.set(count, lastModified);
-    first = true;
+    prevModified = lastModified;
 
     try {
       nashorn.eval("for(var prop in pApplet) {if(!this.isReservedFunction(prop)) {alternateSketch[prop] = pApplet[prop]}}");
-      nashorn.eval(new String(encoded.get(count), StandardCharsets.UTF_8));
+      nashorn.eval(new String(encoded, StandardCharsets.UTF_8));
       nashorn.eval("alternateSketch.setup();");
       print("script loaded in java");
     }
@@ -206,5 +156,5 @@ public static String readFile(String path, int count) throws IOException {
       e.printStackTrace();
     }
   }
-  return new String(encoded.get(count), StandardCharsets.UTF_8);
+  return new String(encoded, StandardCharsets.UTF_8);
 }
